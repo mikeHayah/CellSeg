@@ -70,7 +70,7 @@ def main(config):
         solver.train()
     elif config.mode == 'test':
         
-        predict_patched.make_predictions("./models/StandardUNet-0.0000-104-4.6570-best.pkl", config.test_path)      #update this part to include all images in the test folder
+        predict_patched.make_predictions("./models/StandardUNet-0.0002-149-3.2712.pkl", config.test_path)      #update this part to include all images in the test folder
     elif config.mode == 'retrain':
         solver.retrain("./models/U_Net-150-0.0002-27-0.0261_retrianed.pkl")
     

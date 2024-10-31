@@ -5,7 +5,7 @@ import torch
 import cv2
 import os
 from PIL import Image, ImageOps
-from network import U_Net,R2U_Net,AttU_Net,R2AttU_Net
+# from network import U_Net,R2U_Net,AttU_Net,R2AttU_Net
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms as T
@@ -21,9 +21,9 @@ def make_predictions(state_dict_path, path):
 	
 	criterion = torch.nn.BCELoss()
 	# create the output path
-	output_path = path+'_mask_xR/'
-	neuli_path = path+'_nucli_xR/'
-	boundary_path = path+'_boundary_XR/'
+	output_path = path+'_mask_xR2/'
+	neuli_path = path+'_nucli_xR2/'
+	boundary_path = path+'_boundary_XR2/'
 	if not os.path.exists(output_path):
 		os.makedirs(output_path)
 	if not os.path.exists(boundary_path):

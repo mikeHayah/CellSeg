@@ -8,7 +8,7 @@ from torch import optim
 from torch.autograd import Variable
 import torch.nn.functional as F
 from evaluation import *
-from network import U_Net,R2U_Net,AttU_Net,R2AttU_Net
+# from network import U_Net,R2U_Net,AttU_Net,R2AttU_Net
 from network_standard import UNet
 import csv
 import torch.nn as nn
@@ -55,6 +55,7 @@ class Solver(object):
 		self.mode = config.mode
 
 		self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+		# self.device = 'cpu'
 		self.model_type = config.model_type
 		self.t = config.t
 		self.build_model()
@@ -275,7 +276,7 @@ class Solver(object):
 			best_loss = 1000
 			
 			# test data loading 
-			#images_patches, GT_patches = self.train_loader.dataset.__getitem__(6)
+			# images_patches, _, GT_patches, _,  _ = self.train_loader.dataset.__getitem__(6)
 
 			for epoch in tqdm(range(self.num_epochs)):
 			#for epoch in range(self.num_epochs):
@@ -327,7 +328,9 @@ class Solver(object):
 						gt_btlnek = torch.cat((gt_btlnekc, gt_btlnekn, gt_btlnekb), dim=1)
 						conv_gtbn = nn.Conv2d(3, 1, kernel_size=1).to(self.device)
 						gt_btlnek = conv_gtbn(gt_btlnek)
-						loss_btlnek = self.diceLoss(btnk.view(btnk.size(0), -1), gt_btlnek.view(gt_btlnek.size(0), -1))
+						gt_btlnek = torch.sigmoid(gt_btlnek)
+						# loss_btlnek = self.diceLoss(btnk.view(btnk.size(0), -1), gt_btlnek.view(gt_btlnek.size(0), -1))
+						loss_btlnek = self.criterion(btnk.view(btnk.size(0), -1), gt_btlnek.view(gt_btlnek.size(0), -1))
 					
 
 						
@@ -336,9 +339,13 @@ class Solver(object):
 						SR_cell = SR_probs[:, 0, :, :]
 						SR_neicli = SR_probs[:, 1, :, :]
 						SR_boundary = SR_probs[:, 2, :, :]
-						loss_cell = self.diceLoss(SR_cell.view(SR_cell.size(0), -1), GT.view(GT.size(0), -1))
-						loss_neicli = self.diceLoss(SR_neicli.view(SR_neicli.size(0), -1), nGT.view(nGT.size(0), -1))
-						loss_boundary = self.diceLoss(SR_boundary.view(SR_boundary.size(0), -1), bGT.view(bGT.size(0), -1))
+						# loss_cell = self.diceLoss(SR_cell.view(SR_cell.size(0), -1), GT.view(GT.size(0), -1))
+						# loss_neicli = self.diceLoss(SR_neicli.view(SR_neicli.size(0), -1), nGT.view(nGT.size(0), -1))
+						# loss_boundary = self.diceLoss(SR_boundary.view(SR_boundary.size(0), -1), bGT.view(bGT.size(0), -1))
+						loss_cell = self.criterion(SR_cell.view(SR_cell.size(0), -1), GT.view(GT.size(0), -1))
+						loss_neicli = self.criterion(SR_neicli.view(SR_neicli.size(0), -1), nGT.view(nGT.size(0), -1))
+						loss_boundary = self.criterion(SR_boundary.view(SR_boundary.size(0), -1), bGT.view(bGT.size(0), -1))
+												
 						loss_mask = 0.15*loss_cell + 0.35*loss_neicli + 0.5*loss_boundary
 					
 
@@ -416,8 +423,8 @@ class Solver(object):
 						SR_flat = SR_probs.view(SR_probs.size(0),-1)	
 						GT_flat = GT3c.view(GT3c.size(0),-1)
 									
-						loss_val = self.diceLoss(SR_flat,GT_flat)
-						#loss = self.criterion(SR_flat,GT_flat)
+						# loss_val = self.diceLoss(SR_flat,GT_flat)
+						loss_val = self.criterion(SR_flat,GT_flat)
 						
 						val_loss += loss_val.item()
 

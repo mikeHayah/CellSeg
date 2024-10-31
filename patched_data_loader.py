@@ -29,8 +29,8 @@ class PatchImageFolder(ImageFolder):
 		
 	def _extract_patches(self, image, image_aux, GT, nGT, bGT):
 		
-		img_tensor = torch.from_numpy(np.array(image)).unsqueeze(0).float()
-		imag_aux_tensor = torch.from_numpy(np.array(image_aux)).unsqueeze(0).float()
+		img_tensor = torch.from_numpy(np.array(image)).unsqueeze(0).float()/255.0
+		imag_aux_tensor = torch.from_numpy(np.array(image_aux)).unsqueeze(0).float()/255.0
 		GT_tensor = torch.from_numpy(np.array(GT)).unsqueeze(0).float()
 		nGT_tensor = torch.from_numpy(np.array(nGT)).unsqueeze(0).float()
 		bGT_tensor = torch.from_numpy(np.array(bGT)).unsqueeze(0).float()
